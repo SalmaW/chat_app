@@ -1,5 +1,6 @@
 import 'package:chat_app/services/auth/auth_service.dart';
 import 'package:chat_app/services/chat/chat_services.dart';
+import 'package:chat_app/views/widgets/chat_bubble.dart';
 import 'package:chat_app/views/widgets/my_text_field.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -27,10 +28,14 @@ class ChatPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var theme = Theme.of(context).colorScheme;
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: theme.surface,
       appBar: AppBar(
         title: Text(receiverEmail),
+        backgroundColor: Colors.transparent,
+        foregroundColor: Colors.grey,
+        elevation: 0,
       ),
       body: Column(
         children: [
@@ -72,22 +77,39 @@ class ChatPage extends StatelessWidget {
 
     return Container(
       alignment: alignment,
-      child: Text(data['message']),
+      child: ChatBubble(isCurrentUser: isCurrentUser, message: data['message']),
     );
   }
 
   Widget _buildUserInput() {
-    return Row(
-      children: [
-        Expanded(
-          child: MyTextField(
-            hintText: "Type a message.. ",
-            obscureText: false,
-            controller: _msgController,
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 50.0, right: 25, left: 25),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Expanded(
+            child: MyTextField(
+              hintText: "Type a message.. ",
+              obscureText: false,
+              controller: _msgController,
+            ),
           ),
-        ),
-        IconButton(onPressed: sendMsg, icon: const Icon(Icons.arrow_upward)),
-      ],
+          Container(
+            margin: const EdgeInsets.only(left: 25),
+            child: IconButton(
+              onPressed: sendMsg,
+              icon: const Icon(
+                Icons.arrow_upward,
+                color: Colors.white,
+              ),
+              style: IconButton.styleFrom(
+                shape: const CircleBorder(),
+                backgroundColor: Colors.green,
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

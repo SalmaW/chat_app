@@ -18,9 +18,12 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     var theme = Theme.of(context).colorScheme;
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: theme.surface,
       appBar: AppBar(
         title: Text("Welcome ${user.email}"),
+        backgroundColor: Colors.transparent,
+        foregroundColor: Colors.grey,
+        elevation: 0,
       ),
       drawer: MyDrawer(user: user),
       body: _buildUserList(),

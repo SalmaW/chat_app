@@ -18,13 +18,14 @@ class MyDrawer extends StatelessWidget {
   Widget build(BuildContext context) {
     var theme = Theme.of(context).colorScheme;
     return Drawer(
-      backgroundColor: theme.surface,
+      backgroundColor: theme.tertiary,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Column(
             children: [
               DrawerHeader(
+                //todo: remove the line
                 child: Center(
                   child: Icon(
                     Icons.message,

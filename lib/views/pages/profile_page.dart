@@ -81,9 +81,12 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     var theme = Theme.of(context).colorScheme;
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: theme.surface,
       appBar: AppBar(
         title: const Text('Profile Page'),
+        backgroundColor: Colors.transparent,
+        foregroundColor: Colors.grey,
+        elevation: 0,
       ),
       body: Padding(
         padding: const EdgeInsets.all(25.0),
