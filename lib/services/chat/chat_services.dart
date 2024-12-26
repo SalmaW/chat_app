@@ -36,4 +36,17 @@ class ChatService {
     String chatRoomID = ids.join("_");
     await AuthService().addChatToFireStore(chatRoomID, newMessage);
   }
+
+  Stream<QuerySnapshot> getMessages(String userID, otherUserID) {
+    List<String> ids = [userID, otherUserID];
+    ids.sort();
+    String chatRoomID = ids.join("_");
+
+    return _firestore
+        .collection("chat_rooms")
+        .doc(chatRoomID)
+        .collection("messages")
+        .orderBy("timestamp", descending: false)
+        .snapshots();
+  }
 }
