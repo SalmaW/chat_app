@@ -2,6 +2,8 @@ import 'dart:developer';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
+import '../../model/message.dart';
+
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -59,6 +61,18 @@ class AuthService {
       });
     } catch (e) {
       log('Error adding user to Firestore: $e');
+    }
+  }
+
+  Future<void> addChatToFireStore(String chatRoomID, Message newMessage) async {
+    try {
+      await _firestore
+          .collection('chat_rooms')
+          .doc(chatRoomID)
+          .collection("messages")
+          .add(newMessage.toMap());
+    } catch (e) {
+      log('Error adding chat to Firestore: $e');
     }
   }
 
