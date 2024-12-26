@@ -1,6 +1,9 @@
 # chat_app
 
-A new Flutter project.
+A new Flutter Chat App project.
+
+## Demo
+https://github.com/user-attachments/assets/77f2a3a8-c717-49fd-992e-d8510e71a88e
 
 ## Getting Started
 
