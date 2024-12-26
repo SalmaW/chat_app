@@ -78,6 +78,12 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   @override
+  void dispose() {
+    _currentUserPass.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context).colorScheme;
     return Scaffold(

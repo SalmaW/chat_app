@@ -3,12 +3,14 @@ import 'package:flutter/material.dart';
 class MyTextField extends StatefulWidget {
   final String hintText;
   final TextEditingController controller;
+  final FocusNode? focusNode;
   bool obscureText;
 
   MyTextField(
       {super.key,
       required this.hintText,
       required this.obscureText,
+      this.focusNode,
       required this.controller});
 
   @override
@@ -23,6 +25,7 @@ class _MyTextFieldState extends State<MyTextField> {
     var theme = Theme.of(context).colorScheme;
     return TextField(
       controller: widget.controller,
+      focusNode: widget.focusNode,
       obscureText: widget.obscureText,
       decoration: InputDecoration(
         suffixIcon: (widget.hintText == "Password" ||

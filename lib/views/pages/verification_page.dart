@@ -25,10 +25,12 @@ class _VerificationPageState extends State<VerificationPage> {
     timer = Timer(const Duration(seconds: 5), () {
       widget.user.reload().then((_) {
         if (widget.user.emailVerified == true) {
-          timer.cancel();
           Navigator.pushReplacement(
-              context, MaterialPageRoute(
-              builder: (context) => HomePage(user: widget.user,)));
+              context,
+              MaterialPageRoute(
+                  builder: (context) => HomePage(
+                        user: widget.user,
+                      )));
         }
       });
     });
@@ -40,18 +42,21 @@ class _VerificationPageState extends State<VerificationPage> {
     } catch (e) {
       showDialog(
           context: context,
-          builder: (_) =>
-              AlertDialog(
+          builder: (_) => AlertDialog(
                 title: Text(e.toString()),
               ));
     }
   }
 
   @override
+  void dispose() {
+    timer.cancel();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    var theme = Theme
-        .of(context)
-        .colorScheme;
+    var theme = Theme.of(context).colorScheme;
     return Scaffold(
       backgroundColor: theme.surface,
       body: Center(
