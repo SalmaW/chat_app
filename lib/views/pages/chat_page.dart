@@ -4,12 +4,11 @@ import 'package:chat_app/views/widgets/chat_bubble.dart';
 import 'package:chat_app/views/widgets/my_text_field.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_contacts/contact.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:share_plus/share_plus.dart';
 
+import '../../services/permissions.dart';
 import '../widgets/contacts_bottom_sheet.dart';
 
 class ChatPage extends StatefulWidget {
@@ -33,8 +32,6 @@ class _ChatPageState extends State<ChatPage> {
   final ScrollController _scrollController = ScrollController();
   FocusNode myFocusNode = FocusNode();
   String? _location;
-  final List<Contact> _contacts = []; // List to store contacts
-  bool _isLoading = false;
 
   @override
   void initState() {
@@ -59,32 +56,10 @@ class _ChatPageState extends State<ChatPage> {
   }
 
   Future<void> _getCurrentLocation() async {
-    bool serviceEnabled;
-    LocationPermission permission;
-
-    serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
+    bool permissionGranted = await Permissions.requestLocationPermission();
+    if (!permissionGranted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Location services are disabled.')),
-      );
-      return;
-    }
-
-    permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Location permissions are denied.')),
-        );
-        return;
-      }
-    }
-
-    if (permission == LocationPermission.deniedForever) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-            content: Text('Location permissions are permanently denied.')),
+        const SnackBar(content: Text('Location permissions are denied.')),
       );
       return;
     }
@@ -115,7 +90,7 @@ class _ChatPageState extends State<ChatPage> {
 
   // Add method to pick contact and share it
   void chooseContact(BuildContext context, String receiverID) async {
-    List<Contact> contacts = await getAllContects();
+    List<Contact> contacts = await getAllContacts();
     if (contacts.isNotEmpty) {
       print(contacts);
       showModalBottomSheet(
@@ -132,12 +107,12 @@ class _ChatPageState extends State<ChatPage> {
     }
   }
 
-  Future<List<Contact>> getAllContects() async {
-    final permission = await Permission.contacts.request();
-    if (!permission.isGranted) return [];
-    List<Contact> contacts =
-        await FlutterContacts.getContacts(withProperties: true);
-    return contacts;
+  Future<List<Contact>> getAllContacts() async {
+    bool permissionGranted = await Permissions.requestContactsPermission();
+    if (!permissionGranted) {
+      return [];
+    }
+    return await FlutterContacts.getContacts(withProperties: true);
   }
 
   void sendContact(Contact contact, String receiverID) async {
@@ -145,48 +120,6 @@ class _ChatPageState extends State<ChatPage> {
         "Name: ${contact.displayName}, Phone: ${contact.phones.isNotEmpty ? contact.phones.first.number : 'No phone number'}";
     await _chatService.sendMsg(receiverID, contactInfo);
   }
-
-  void _showPermissionDeniedDialog() {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Permission Required'),
-        content: const Text(
-          'Contacts permission is required to fetch contacts. '
-          'Please enable it in settings.',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-              openAppSettings();
-            },
-            child: const Text('Open Settings'),
-          ),
-        ],
-      ),
-    );
-  }
-
-  // void _showErrorDialog(String message) {
-  //   showDialog(
-  //     context: context,
-  //     builder: (context) => AlertDialog(
-  //       title: const Text('Error'),
-  //       content: Text(message),
-  //       actions: [
-  //         TextButton(
-  //           onPressed: () => Navigator.pop(context),
-  //           child: const Text('OK'),
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  // }
 
   void scrollDown() {
     _scrollController.animateTo(
@@ -328,27 +261,4 @@ class _ChatPageState extends State<ChatPage> {
       },
     );
   }
-
-// Show a contact picker
-// Future<void> _showContactPicker(BuildContext context) async {
-//   showModalBottomSheet(
-//     context: context,
-//     builder: (context) {
-//       return ListView.builder(
-//         itemCount: _contacts.length,
-//         itemBuilder: (context, index) {
-//           Contact contact = _contacts[index];
-//           return ListTile(
-//             title: Text(contact.displayName ?? 'No Name'),
-//             subtitle: Text(contact.phones.first.number ?? 'No Phone'),
-//             onTap: () {
-//               _fetchContacts(); // Send the selected contact
-//               Navigator.pop(context);
-//             },
-//           );
-//         },
-//       );
-//     },
-//   );
-// }
 }

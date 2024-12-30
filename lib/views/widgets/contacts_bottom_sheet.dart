@@ -13,26 +13,24 @@ class ContactListBottomSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: ListView.builder(
-        itemCount: contacts.length,
-        itemBuilder: (context, index) {
-          Contact contact = contacts[index];
-          return ListTile(
-            leading: const Icon(Icons.person),
-            title: Text(
-              contact.displayName,
-            ),
-            subtitle: contact.phones.isNotEmpty
-                ? Text(contact.phones.first.number)
-                : const Text("No phone number available"),
-            onTap: () {
-              Navigator.pop(context);
-              onContactSelected(contact);
-            },
-          );
-        },
-      ),
+    return ListView.builder(
+      itemCount: contacts.length,
+      itemBuilder: (context, index) {
+        Contact contact = contacts[index];
+        return ListTile(
+          leading: const Icon(Icons.person),
+          title: Text(
+            contact.displayName,
+          ),
+          subtitle: contact.phones.isNotEmpty
+              ? Text(contact.phones.first.number)
+              : const Text("No phone number available"),
+          onTap: () {
+            Navigator.pop(context);
+            onContactSelected(contact);
+          },
+        );
+      },
     );
   }
 }
